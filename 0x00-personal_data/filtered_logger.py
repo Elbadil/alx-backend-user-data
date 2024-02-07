@@ -1,8 +1,20 @@
 #!/usr/bin/env python3
 """Defining a Function filter_datum"""
-from typing import List
+from typing import List, Tuple
 import re
 import logging
+
+
+PII_FIELDS: Tuple[str] = ('password', 'phone',
+                          'email', 'last_login', 'ssn')
+
+
+def filter_datum(fields: List[str], redaction: str,
+                 message: str, separator: str) -> str:
+    """returns the log message obfuscated"""
+    pattern = '|'.join(fields)
+    return re.sub(f'({pattern})=([^{separator}]+)',
+                  f'\\1={redaction}', message)
 
 
 class RedactingFormatter(logging.Formatter):
@@ -14,7 +26,7 @@ class RedactingFormatter(logging.Formatter):
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
-        """Initialized new formatter"""
+        """Initializes new formatter"""
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
@@ -25,9 +37,12 @@ class RedactingFormatter(logging.Formatter):
         return super().format(record)
 
 
-def filter_datum(fields: List[str], redaction: str,
-                 message: str, separator: str) -> str:
-    """returns the log message obfuscated"""
-    pattern = '|'.join(fields)
-    return re.sub(f'({pattern})=([^{separator}]+)',
-                  f'\\1={redaction}', message)
+def get_logger():
+    """returns a logging.Logger object"""
+    user_logger = logging.getLogger('user_data')
+    handler = logging.StreamHandler()
+    handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    user_logger.setLevel(logging.INFO)
+    user_logger.propagate = False
+    user_logger.addHandler(handler)
+    return user_logger
