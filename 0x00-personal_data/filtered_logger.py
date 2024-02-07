@@ -10,11 +10,11 @@ class RedactingFormatter(logging.Formatter):
         """
 
     REDACTION = "***"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]) -> None:
-        super(RedactingFormatter, self).__init__()
-        self.fields = fields
+        super(RedactingFormatter, self).__init__(self.FORMAT)
 
     def format(self, record: logging.LogRecord) -> str:
         """returns a str representation of a LogRecord"""
