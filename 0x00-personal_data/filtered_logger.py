@@ -5,7 +5,6 @@ import re
 import logging
 import mysql.connector
 from os import getenv
-
 import mysql.connector
 
 
@@ -53,10 +52,40 @@ def get_logger() -> logging.Logger:
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """returns a connector to the database"""
+    username = getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    password = getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    host = getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    database = getenv('PERSONAL_DATA_DB_NAME')
     db_connection = mysql.connector.connect(
-        host=getenv('PERSONAL_DATA_DB_HOST'),
-        user=getenv('PERSONAL_DATA_DB_USERNAME'),
-        password=getenv('PERSONAL_DATA_DB_PASSWORD'),
-        database=getenv('PERSONAL_DATA_DB_NAME')
+        host=host,
+        user=username,
+        password=password,
+        database=database
     )
     return db_connection
+
+
+def main():
+    """displays the logs info in from the database"""
+    db = get_db()
+    logger = get_logger()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    for row in cursor:
+        user_data_str = (
+            f'name={row[0]}; '
+            f'email={row[1]}; '
+            f'phone={row[2]}; '
+            f'ssn={row[3]}; '
+            f'password={row[4]}; '
+            f'ip={row[5]}; '
+            f'last_login={row[6]}; '
+            f'user_agent={row[7]};'
+        )
+        logger.info(user_data_str)
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
