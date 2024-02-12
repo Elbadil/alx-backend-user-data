@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Defining a class BasicAuth"""
 from api.v1.auth.auth import Auth
-from typing import Tuple
+from typing import Tuple, TypeVar
+from models.user import User
 import base64
 import binascii
 
@@ -44,3 +45,20 @@ class BasicAuth(Auth):
 
         email, password = decoded_base64_authorization_header.split(':')
         return (email, password)
+
+    def user_object_from_credentials(
+            self,
+            user_email: str, user_pwd: str) -> User:
+        """returns a User object if exists in the db
+        else None"""
+        if user_email is None or user_pwd is None:
+            return None
+
+        user = None
+        users_list = User.search({'email': user_email})
+        if users_list:
+            for users in users_list:
+                if users.is_valid_password(user_pwd):
+                    user = users
+
+        return user if user else None
