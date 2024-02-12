@@ -51,7 +51,10 @@ class BasicAuth(Auth):
             user_email: str, user_pwd: str) -> User:
         """returns a User object if exists in the db
         else None"""
-        if user_email is None or user_pwd is None:
+        if (user_email is None
+            or type(user_email) != str
+            or user_pwd is None
+            or type(user_pwd) != str):
             return None
 
         user = None
