@@ -10,7 +10,8 @@ User = TypeVar('User')
 class Auth:
     """Class Auth that handles Authentication"""
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """require_auth method"""
+        """require_auth method that returns false if path is
+        not in excluded_paths"""
         if (path is None
                 or excluded_paths is None
                 or len(excluded_paths) == 0):
@@ -21,7 +22,11 @@ class Auth:
 
     def authorization_header(self, request=None) -> str:
         """authorization_header method"""
-        return None
+        auth_value = request.args.get('Authorization')
+        if request is None or auth_value is None:
+            return None
+        else:
+            return auth_value
 
     def current_user(self, request=None) -> User:
         """current_user method"""
