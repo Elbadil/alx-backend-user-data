@@ -57,11 +57,10 @@ class BasicAuth(Auth):
                 or type(user_pwd) != str):
             return None
 
-        user = None
         users_list = User.search({'email': user_email})
         if users_list:
             for users in users_list:
                 if users.is_valid_password(user_pwd):
-                    user = users
+                    return users
 
-        return user if user else None
+        return None
