@@ -58,11 +58,24 @@ class BasicAuth(Auth):
             return None
 
         users_list = User.search({'email': user_email})
-        if not users_list:
-            return None
-
-        for user in users_list:
-            if user.is_valid_password(user_pwd):
-                return user
+        if users_list:
+            for user in users_list:
+                if user.is_valid_password(user_pwd):
+                    return user
 
         return None
+
+    def current_user(self, request=None) -> User:
+        """returns current user info if the bacic auth is valid"""
+        user = None
+        auth_value = self.authorization_header(request)
+        if auth_value:
+            extrct_b64 = self.extract_base64_authorization_header(auth_value)
+            if extrct_b64:
+                dc_b64 = self.decode_base64_authorization_header(extrct_b64)
+                if dc_b64:
+                    u_eml, u_pwd = self.extract_user_credentials(dc_b64)
+                    if u_eml and u_pwd:
+                        user = self.user_object_from_credentials(u_eml, u_pwd)
+
+        return user if user else None
