@@ -48,7 +48,7 @@ class BasicAuth(Auth):
 
     def user_object_from_credentials(
             self,
-            user_email: str, user_pwd: str) -> TypeVar('User'):
+            user_email: str, user_pwd: str) -> User:
         """returns a User object if exists in the db
         else None"""
         if (user_email is None
@@ -58,9 +58,11 @@ class BasicAuth(Auth):
             return None
 
         users_list = User.search({'email': user_email})
-        if users_list:
-            for users in users_list:
-                if users.is_valid_password(user_pwd):
-                    return users
+        if not users_list:
+            return None
+
+        for user in users_list:
+            if user.is_valid_password(user_pwd):
+                return user
 
         return None
