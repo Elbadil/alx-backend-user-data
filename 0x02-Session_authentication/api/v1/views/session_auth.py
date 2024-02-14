@@ -3,7 +3,7 @@
 """
 from api.v1.views import app_views
 from api.v1.auth.session_auth import SessionAuth
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from models.user import User
 import os
 
@@ -41,3 +41,16 @@ def session_auth():
         user_json_data = jsonify(user.to_json())
         user_json_data.set_cookie(session_name, session_id)
         return user_json_data
+
+
+@app_views.route('/auth_session/logout',
+                 methods=['DELETE'],
+                 strict_slashes=False)
+def logout():
+    """logs out a user and destroys its session"""
+    from api.v1.app import auth
+    destroying_session = auth.destroy_session(request)
+    if destroying_session is False:
+        abort(404)
+
+    return jsonify({}), 200
