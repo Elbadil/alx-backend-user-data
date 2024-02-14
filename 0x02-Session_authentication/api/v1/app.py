@@ -15,7 +15,11 @@ app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
 
-if os.getenv('AUTH_TYPE') == 'session_exp_auth':
+
+if os.getenv('AUTH_TYPE') == 'session_db_auth':
+    from api.v1.auth.session_db_auth import SessionDBAuth
+    auth = SessionDBAuth()
+elif os.getenv('AUTH_TYPE') == 'session_exp_auth':
     from api.v1.auth.session_exp_auth import SessionExpAuth
     auth = SessionExpAuth()
 elif os.getenv('AUTH_TYPE') == 'session_auth':
