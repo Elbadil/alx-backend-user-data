@@ -18,7 +18,7 @@ def bienvenue():
 
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def users():
-    """"""
+    """Registers a user in the db if not already exists"""
     user_email = request.form.get('email')
     user_pwd = request.form.get('password')
     try:
