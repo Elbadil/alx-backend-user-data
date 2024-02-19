@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Defining a Flask App"""
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from auth import Auth
 
 
@@ -28,6 +28,22 @@ def users():
              'message': 'user created'})
     except ValueError:
         return jsonify({"message": "email already registered"}), 400
+
+
+@app.route('/sessions', methods=['POST'], strict_slashes=False)
+def login():
+    """Create a session id for a user and sets cookie to session_id"""
+    user_email = request.form.get('email')
+    user_pwd = request.form.get('password')
+    valid_info = AUTH.valid_login(user_email, user_pwd)
+    if valid_info is False:
+        abort(401)  # Unauthorized
+
+    session_id = AUTH.create_session(user_email)
+    json_response = jsonify({"email": f"{user_email}",
+                             "message": "logged in"})
+    json_response.set_cookie('session_id', session_id)
+    return json_response
 
 
 if __name__ == "__main__":
