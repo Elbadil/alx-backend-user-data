@@ -51,3 +51,15 @@ class DB:
             raise NoResultFound
 
         return user
+
+    def update_user(self, user_id: int,
+                    **kwargs: Dict[str, Union[str, int]]) -> None:
+        """Updates user's attribute values based on keyword
+        arguments provided"""
+        user = self.find_user_by(id=user_id)
+        for key, val in kwargs.items():
+            if not hasattr(User, key):
+                raise ValueError
+            setattr(user, key, val)
+
+        self._session.commit()
