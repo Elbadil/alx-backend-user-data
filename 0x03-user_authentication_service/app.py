@@ -45,6 +45,7 @@ def login():
     json_response.set_cookie('session_id', session_id)
     return json_response
 
+
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout():
     """"""
