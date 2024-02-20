@@ -40,7 +40,7 @@ class DB:
         self._session.commit()
         return user
 
-    def find_user_by(self, **kwargs: Dict[str, Union[str, int]]) -> User:
+    def find_user_by(self, **kwargs: Dict[str, str]) -> User:
         """Finding a user based on the keyword arguments provided"""
         try:
             user = self._session.query(User).filter_by(**kwargs).one()
@@ -52,7 +52,7 @@ class DB:
         return user
 
     def update_user(self, user_id: int,
-                    **kwargs: Dict[str, Union[str, int]]) -> None:
+                    **kwargs: Dict[str, str]) -> None:
         """Updates user's attribute values based on keyword
         arguments provided"""
         user = self.find_user_by(id=user_id)
