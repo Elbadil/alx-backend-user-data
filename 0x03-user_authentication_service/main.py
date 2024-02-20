@@ -12,7 +12,7 @@ def register_user(email: str, password: str) -> None:
     """testing register_user route by sending requests with
     the requests module"""
     data = {'email': email, 'password': password}
-    post_req = requests.post(URL + '/users', data=data)
+    post_req = requests.post(URL + 'users', data=data)
     assert post_req.json() == {'email': email,
                                'message': 'user created'}
 
@@ -21,14 +21,14 @@ def log_in_wrong_password(email: str, password: str) -> None:
     """testing login route by sending requests
     with the requests module"""
     data = {'email': email, 'password': password}
-    post_req = requests.post(URL + '/sessions', data=data)
+    post_req = requests.post(URL + 'sessions', data=data)
     assert post_req.status_code == 401
 
 
 def profile_unlogged() -> None:
     """testing profile route by sending requests
     with the requests module"""
-    get_req = requests.get(URL + '/profile')
+    get_req = requests.get(URL + 'profile')
     assert get_req.status_code == 403
 
 
@@ -36,7 +36,7 @@ def log_in(email: str, password: str) -> str:
     """testing login endpoint by sending requests
     with the requests module"""
     data = {'email': email, 'password': password}
-    post_req = requests.post(URL + '/sessions', data=data)
+    post_req = requests.post(URL + 'sessions', data=data)
     session_id = post_req.cookies.get('session_id')
     assert post_req.json() == {"email": email,
                                "message": "logged in"}
@@ -47,7 +47,7 @@ def profile_logged(session_id: str) -> None:
     """testing profile endpoint by sending requests
     with the requests module"""
     session_cookie = {'session_id': session_id}
-    get_req = requests.get(URL + '/profile', cookies=session_cookie)
+    get_req = requests.get(URL + 'profile', cookies=session_cookie)
     assert get_req.status_code == 200
 
 
@@ -55,7 +55,7 @@ def log_out(session_id: str) -> None:
     """testing logout endpoint by sending requests
     with the requests module"""
     session_cookie = {'session_id': session_id}
-    delete_req = requests.delete(URL + '/sessions',
+    delete_req = requests.delete(URL + 'sessions',
                                  cookies=session_cookie)
     assert delete_req.json() == {"message": "Bienvenue"}
 
@@ -64,7 +64,7 @@ def reset_password_token(email: str) -> str:
     """testing reset_password endpoint by sending requests
     with the requests module"""
     data = {'email': email}
-    post_req = requests.post(URL + '/reset_password',
+    post_req = requests.post(URL + 'reset_password',
                              data=data)
     assert post_req.status_code == 200
     return post_req.json()['reset_token']
