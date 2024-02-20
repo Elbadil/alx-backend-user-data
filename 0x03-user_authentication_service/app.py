@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Defining a Flask App"""
-from flask import Flask, jsonify, request, abort, redirect
+from flask import Flask, jsonify, request, abort, redirect, url_for
 from auth import Auth
 
 
@@ -17,7 +17,7 @@ def bienvenue() -> str:
 
 
 @app.route('/users', methods=['POST'], strict_slashes=False)
-def users():
+def users() -> str:
     """Registers a user in the db if not already exists"""
     user_email = request.form.get('email')
     user_pwd = request.form.get('password')
@@ -31,7 +31,7 @@ def users():
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
-def login():
+def login() -> str:
     """Create a session id for a user and sets cookie to session_id"""
     user_email = request.form.get('email')
     user_pwd = request.form.get('password')
@@ -47,15 +47,15 @@ def login():
 
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
-def logout():
-    """"""
-    session_id = request.cookie.get('session_id')
+def logout() -> str:
+    """deletes session_id of the user and logs the user out"""
+    session_id = request.cookies.get('session_id')
     user = AUTH.get_user_from_session_id(session_id)
     if user is None:
         abort(403)
 
     AUTH.destroy_session(user.id)
-    return redirect('bienvenue')
+    return redirect(url_for('bienvenue'))
 
 
 if __name__ == "__main__":
