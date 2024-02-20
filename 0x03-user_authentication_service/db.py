@@ -43,12 +43,11 @@ class DB:
     def find_user_by(self, **kwargs: Dict[str, Union[str, int]]) -> User:
         """Finding a user based on the keyword arguments provided"""
         try:
-            user = self._session.query(User).filter_by(**kwargs).first()
+            user = self._session.query(User).filter_by(**kwargs).one()
         except NoResultFound:
             raise NoResultFound()
         except InvalidRequestError:
             raise InvalidRequestError()
-
         return user
 
     def update_user(self, user_id: int,
