@@ -19,7 +19,7 @@ class DB:
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -44,11 +44,11 @@ class DB:
         """Finding a user based on the keyword arguments provided"""
         for key in kwargs.keys():
             if not hasattr(User, key):
-                raise InvalidRequestError
+                raise InvalidRequestError()
 
         user = self._session.query(User).filter_by(**kwargs).first()
         if user is None:
-            raise NoResultFound
+            raise NoResultFound()
 
         return user
 
