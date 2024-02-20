@@ -40,7 +40,7 @@ class DB:
         self._session.commit()
         return user
 
-    def find_user_by(self, **kwargs: Dict[str, Union[str, int]]) -> User:
+    def find_user_by(self, **kwargs: Dict[str, str]) -> User:
         """Finding a user based on the keyword arguments provided"""
         for key in kwargs.keys():
             if not hasattr(User, key):
